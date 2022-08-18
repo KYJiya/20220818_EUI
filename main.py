@@ -43,10 +43,10 @@ def url_loop(url_requests, keyword, file):
                 )
 
             if keyword in tag.text:
-                # wget.download(
-                #     url_request._request_url+tag.text, 
-                #     out=os.path.join(os.getcwd(), 'data', tag.text)
-                # )
+                wget.download(
+                    url_request._request_url+tag.text, 
+                    out=os.path.join(os.getcwd(), 'data', tag.text)
+                )
                 file.write(url_request._request_url+tag.text+'\n')
         
     return sub_pages
