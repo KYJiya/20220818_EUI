@@ -3,7 +3,7 @@
 # https://www.sidc.be/EUI/data/
 
 > # 실행방법  
-python -m venv .venv  
+> python -m venv .venv  
 ./.venv/scripts/activate  
 pip install -r requirements.txt  
 python main.py  
