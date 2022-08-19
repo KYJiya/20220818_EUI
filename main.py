@@ -43,10 +43,11 @@ def url_loop(url_requests, keyword, file):
                 )
 
             if keyword in tag.text:
-                wget.download(
-                    url_request._request_url+tag.text, 
-                    out=os.path.join(os.getcwd(), 'data', tag.text)
-                )
+                # 밑의 주석을 해제하면 다운로드를 시작함
+                # wget.download(
+                #     url_request._request_url+tag.text, 
+                #     out=os.path.join(os.getcwd(), 'data', tag.text)
+                # )
                 file.write(url_request._request_url+tag.text+'\n')
         
     return sub_pages
@@ -65,10 +66,11 @@ if __name__=="__main__":
         lines = file.readlines()
         for line in tqdm(lines):
             line = line.strip()
-            wget.download(
-                line, 
-                out=os.path.join(os.getcwd(), 'data', os.path.basename(line))
-            )
+            # 밑의 주석을 해제하면 다운로드를 시작함
+            # wget.download(
+            #     line, 
+            #     out=os.path.join(os.getcwd(), 'data', os.path.basename(line))
+            # )
     else:
         file = open(index_file, "w")
         while 0 in data['check'].values:
