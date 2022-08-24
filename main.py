@@ -4,7 +4,9 @@ import urllib3
 import pandas as pd
 from tqdm import tqdm
 from bs4 import BeautifulSoup
+from dotenv import load_dotenv
 
+load_dotenv()
 
 def makedirs(directory): 
     try: 
@@ -14,13 +16,14 @@ def makedirs(directory):
             raise   
 
 
-def open_url(data):
+def open_url(data, headers):
     url_requests = []
     for index, row in tqdm(data[data['check'] == 0].iterrows(), total=data[data['check'] == 0].shape[0]):
         http = urllib3.PoolManager()
         r = http.request(
             'GET',
             row['url'],
+            headers=headers,
         )
         data['check'][index] = 1
         url_requests.append(r)
@@ -55,12 +58,16 @@ def url_loop(url_requests, keyword, file):
 
 if __name__=="__main__":    
 
-    data = pd.DataFrame([['https://www.sidc.be/EUI/data/L1/', 0]], columns = ['url', 'check'])
+    id = os.environ.get('id')
+    pw = os.environ.get('pw')
+    headers = urllib3.make_headers(basic_auth=id+":"+pw)
+    # data = pd.DataFrame([['https://www.sidc.be/EUI/data/L1/', 0]], columns = ['url', 'check'])
+    data = pd.DataFrame([['https://www.sidc.be/EUI/data_internal/L1/2022', 0]], columns = ['url', 'check'])
     keyword = 'hrieuv174'
     index_file = os.path.join(os.getcwd(), 'data/category/index.txt')
 
     makedirs('data/category')
-
+    
     if os.path.isfile(index_file):
         file = open(index_file, "r")
         lines = file.readlines()
@@ -74,7 +81,7 @@ if __name__=="__main__":
     else:
         file = open(index_file, "w")
         while 0 in data['check'].values:
-            url_requests = open_url(data)
+            url_requests = open_url(data, headers)
             temp= url_loop(url_requests, keyword, file)
             data = pd.concat([data, temp], ignore_index=True)
 
