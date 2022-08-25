@@ -31,7 +31,21 @@ def open_url(data, headers):
     return url_requests
 
 
-def url_loop(url_requests, keyword, file):
+def file_download(url, filename, headers):
+    http = urllib3.PoolManager()
+    r = http.request(
+        'GET',
+        url,
+        headers=headers,
+        preload_content=False,
+    )
+
+    with open(filename, 'wb') as out:
+        out.write(r.read())
+
+
+
+def url_loop(url_requests, keyword, file, headers):
     sub_pages = pd.DataFrame(columns = ['url', 'check'])
     for url_request in tqdm(url_requests, leave=False):
         soup = BeautifulSoup(url_request.data, 'lxml')
@@ -47,10 +61,11 @@ def url_loop(url_requests, keyword, file):
 
             if any(ext in tag.text for ext in keyword):
                 # 밑의 주석을 해제하면 다운로드를 시작함
-                # wget.download(
-                #     url_request._request_url+tag.text, 
-                #     out=os.path.join(os.getcwd(), 'data', tag.text)
-                # )
+                file_download(
+                    url_request._request_url+tag.text,
+                    os.path.join(os.getcwd(), 'data', tag.text),
+                    headers,
+                )
                 file.write(url_request._request_url+tag.text+'\n')
         
     return sub_pages
@@ -74,15 +89,16 @@ if __name__=="__main__":
         for line in tqdm(lines):
             line = line.strip()
             # 밑의 주석을 해제하면 다운로드를 시작함
-            # wget.download(
-            #     line, 
-            #     out=os.path.join(os.getcwd(), 'data', os.path.basename(line))
-            # )
+            file_download(
+                line,
+                os.path.join(os.getcwd(), 'data', os.path.basename(line)),
+                headers,
+            )
     else:
         file = open(index_file, "w")
         while 0 in data['check'].values:
             url_requests = open_url(data, headers)
-            temp = url_loop(url_requests, keyword, file)
+            temp = url_loop(url_requests, keyword, file, headers)
             data = pd.concat([data, temp], ignore_index=True)
 
     file.close()
