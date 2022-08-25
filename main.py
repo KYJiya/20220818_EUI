@@ -45,7 +45,7 @@ def url_loop(url_requests, keyword, file):
                     ignore_index=True
                 )
 
-            if keyword in tag.text:
+            if any(ext in tag.text for ext in keyword):
                 # 밑의 주석을 해제하면 다운로드를 시작함
                 # wget.download(
                 #     url_request._request_url+tag.text, 
@@ -63,7 +63,7 @@ if __name__=="__main__":
     headers = urllib3.make_headers(basic_auth=id+":"+pw)
     # data = pd.DataFrame([['https://www.sidc.be/EUI/data/L1/', 0]], columns = ['url', 'check'])
     data = pd.DataFrame([['https://www.sidc.be/EUI/data_internal/L1/2022', 0]], columns = ['url', 'check'])
-    keyword = 'hrieuv174'
+    keyword = ['hrieuv174', 'image']
     index_file = os.path.join(os.getcwd(), 'data/category/index.txt')
 
     makedirs('data/category')
@@ -82,7 +82,7 @@ if __name__=="__main__":
         file = open(index_file, "w")
         while 0 in data['check'].values:
             url_requests = open_url(data, headers)
-            temp= url_loop(url_requests, keyword, file)
+            temp = url_loop(url_requests, keyword, file)
             data = pd.concat([data, temp], ignore_index=True)
 
     file.close()
