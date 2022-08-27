@@ -4,10 +4,10 @@ import pandas as pd
 
 if __name__=="__main__":
 
-    column_names = ['name', 'start_time', 'end_time', 'd', 'e']
-
-    # file_name = 'HRIEUV_DataList_24082022'
-    file_name = 'HRILYA_DataList_24082022'
+    column_names = ['name', 'start_time', 'end_time', 'cadence', '#']
+    au = 149598000
+    file_name = 'EUV_26082022'
+    # file_name = 'LYA_26082022'
     
     input_file = os.path.join(os.getcwd(), 'data', file_name+'.txt')
     output_file = os.path.join(os.getcwd(), 'data', file_name+'.csv')
@@ -36,16 +36,17 @@ if __name__=="__main__":
     df = pd.concat(
         [
             df.drop(
-                'e', 
+                column_names[-1], 
                 axis=1, 
                 inplace=False,
             ), 
             df_start_time['ToSun'], 
-            df['e'],
+            df[column_names[-1]],
         ], 
         axis=1,
     )
 
+    df['ToSun'] = (df['ToSun']/au).map(lambda x: '{0: .2f}'.format(x))
     df.to_csv(output_file, index=False)
 
     
