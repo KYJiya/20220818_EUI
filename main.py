@@ -58,8 +58,11 @@ def url_loop(url_requests, keyword, file, headers):
                     )],
                     ignore_index=True
                 )
-
-            if any(ext in tag.text for ext in keyword):
+            
+            # or function
+            # if any(ext in tag.text for ext in keyword):
+            # and function
+            if all(ext in tag.text for ext in keyword):
                 # 밑의 주석을 해제하면 다운로드를 시작함
                 file_download(
                     url_request._request_url+tag.text,
